@@ -33,7 +33,6 @@ Une fois l'installation terminée, vérifiez que Python 3 est correctement insta
 python3 --version
 Vous devriez voir une sortie similaire à celle-ci, indiquant que Python 3 est installé avec succès :
 
-Copier le code
 Python 3.x.x
 Étape 4 : Installer pip pour Python 3
 pip est l'outil de gestion de paquets pour Python. Il est souvent utilisé pour installer et gérer des bibliothèques Python. Pour installer pip pour Python 3, exécutez la commande suivante :
