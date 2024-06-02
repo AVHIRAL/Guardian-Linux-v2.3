@@ -21,21 +21,15 @@ Accès à un terminal avec des privilèges sudo.
 Étape 1 : Mettre à jour les paquets
 Avant d'installer Python 3, il est recommandé de mettre à jour la liste des paquets disponibles et les paquets installés sur votre système. Ouvrez un terminal et exécutez les commandes suivantes :
 
-bash
-Copier le code
 sudo apt update
 sudo apt upgrade
 Étape 2 : Installer Python 3
 Debian et Ubuntu incluent Python 3 dans leurs dépôts par défaut. Pour installer Python 3, utilisez la commande suivante :
 
-bash
-Copier le code
 sudo apt install python3
 Étape 3 : Vérifier l'installation de Python 3
 Une fois l'installation terminée, vérifiez que Python 3 est correctement installé en vérifiant sa version :
 
-bash
-Copier le code
 python3 --version
 Vous devriez voir une sortie similaire à celle-ci, indiquant que Python 3 est installé avec succès :
 
@@ -44,22 +38,14 @@ Python 3.x.x
 Étape 4 : Installer pip pour Python 3
 pip est l'outil de gestion de paquets pour Python. Il est souvent utilisé pour installer et gérer des bibliothèques Python. Pour installer pip pour Python 3, exécutez la commande suivante :
 
-bash
-Copier le code
 sudo apt install python3-pip
 Étape 5 : Vérifier l'installation de pip
 Après l'installation, vous pouvez vérifier que pip est correctement installé en vérifiant sa version :
 
-bash
-Copier le code
 pip3 --version
 Vous devriez voir une sortie similaire à celle-ci, indiquant que pip est installé avec succès :
 
-bash
-Copier le code
 pip 21.0.1 from /usr/lib/python3/dist-packages/pip (python 3.x)
-
-
 
 INSTALLATION GUARDIAN V2.3 :
 
