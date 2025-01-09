@@ -10,7 +10,21 @@ https://discord.gg/GP6p6jSH
    @  @   @@   @  @  @@@  @  @  @  @  @@@ TE@M
 
 
-AVHIRAL-GUARDIAN V2.3 LINUX
+AVHIRAL-GUARDIAN V2.4 LINUX
+
+Changer par votre IP Publique dans cette partie en bas du code :
+
+if __name__ == "__main__":
+    public_ip = "VOTRE IP PUBLIQUE"  # Replace with your actual public IP
+    guardian = Guardian(public_ip)
+    if "--start" in sys.argv:
+        guardian.start()
+    elif "--stop" in sys.argv:
+        subprocess.run(["systemctl", "stop", "guardian.service"])
+    elif "--status" in sys.argv:
+        print("Guardian is active." if guardian.active else "Guardian is not active.")
+
+------------------------------------------------------------------------------------------
 
 Tutoriel pour installer Python 3 sur Debian et Ubuntu
 Suivez ces étapes pour installer Python 3 sur votre système Debian ou Ubuntu.
