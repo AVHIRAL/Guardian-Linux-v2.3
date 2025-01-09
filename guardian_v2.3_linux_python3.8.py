@@ -83,9 +83,10 @@ class MalwareScanner(Thread):
         return os.path.getsize(file_path) > 50000
 
 class NetworkMonitor(Thread):
-    def __init__(self, threshold):
+    def __init__(self, threshold, public_ip):
         super().__init__()
         self.threshold = threshold
+        self.public_ip = public_ip  # Public IP of your router to exclude
         self.ip_counts = {}
 
     def run(self):
@@ -99,23 +100,31 @@ class NetworkMonitor(Thread):
         for conn in psutil.net_connections(kind='inet'):
             if conn.status == "ESTABLISHED":
                 ip = conn.raddr.ip if conn.raddr else 'Unknown'
+                if self.is_local_or_public_ip(ip):
+                    continue  # Skip local IPs and the router's public IP
                 self.ip_counts[ip] = self.ip_counts.get(ip, 0) + 1
                 if self.ip_counts[ip] > self.threshold:
                     log_event(f"Suspect network activity: {ip} has reached {self.ip_counts[ip]} connections")
                     if self.ip_counts[ip] > self.threshold * 2:
                         self.block_ip(ip)
 
+    def is_local_or_public_ip(self, ip_address):
+        # Skip private IPs and your router's public IP
+        return ip_address.startswith("192.168.") or ip_address == self.public_ip
+
     def block_ip(self, ip_address):
         subprocess.run(['sudo', 'iptables', '-A', 'INPUT', '-s', ip_address, '-j', 'DROP'])
         log_event(f"Blocked IP address: {ip_address}")
 
 class Guardian:
-    def __init__(self):
+    def __init__(self, public_ip):
         self.active = True
+        self.public_ip = public_ip
         self.setup_signal_handlers()
         self.threads = [
             RansomwareProtection(["/home", "/var/www"]),
             MalwareScanner(["/usr/local/bin", "/usr/bin"]),
+            NetworkMonitor(100, public_ip)
         ]
 
     def setup_signal_handlers(self):
@@ -142,44 +151,11 @@ class Guardian:
     def status(self):
         return "Actif" if self.active else "Inactif"
 
-    def install_service():
-        script = os.path.realpath(__file__)
-        service_unit = f"""[Unit]
-
-Description=Guardian Service
-After=network.target
-
-[Service]
-Type=simple
-ExecStart=/usr/bin/python3 {script} --start
-Restart=always
-
-[Install]
-WantedBy=multi-user.target
-"""
-        with open("/etc/systemd/system/guardian.service", "w") as f:
-            f.write(service_unit)
-        subprocess.run(["systemctl", "daemon-reload"])
-        subprocess.run(["systemctl", "enable", "guardian.service"])
-        subprocess.run(["systemctl", "start", "guardian.service"])
-        log_event("Guardian installed and started as a service.")
-
 if __name__ == "__main__":
-    guardian = Guardian()
+    public_ip = "VOTRE IP PUBLIQUE"  # Replace with your actual public IP
+    guardian = Guardian(public_ip)
     if "--start" in sys.argv:
-        if "--install" in sys.argv:
-            guardian.start()
-
-            install_service()
-        else:
-            ransomware_protection = RansomwareProtection(["/home", "/var/www"])
-            malware_scanner = MalwareScanner(["/usr/local/bin", "/usr/bin"])
-            network_monitor = NetworkMonitor(100)
-            ransomware_protection.start()
-            malware_scanner.start()
-            network_monitor.start()
-            guardian.start()
-
+        guardian.start()
     elif "--stop" in sys.argv:
         subprocess.run(["systemctl", "stop", "guardian.service"])
     elif "--status" in sys.argv:
